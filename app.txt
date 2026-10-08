@@ -1,0 +1,83 @@
+import random
+import streamlit as st
+
+st.set_page_config(
+    page_title="Inayatullah's Rock Paper Scissors",
+    page_icon="🎮",
+    layout="centered"
+)
+
+st.title("🎮 Inayatullah's Rock Paper Scissors Game")
+st.write("Choose your move and challenge the computer!")
+
+# Initialize scores
+if "player_score" not in st.session_state:
+    st.session_state.player_score = 0
+if "computer_score" not in st.session_state:
+    st.session_state.computer_score = 0
+if "draws" not in st.session_state:
+    st.session_state.draws = 0
+if "result" not in st.session_state:
+    st.session_state.result = "Choose your move to start!"
+
+choices = ["Rock", "Paper", "Scissors"]
+
+st.subheader("Make your choice")
+
+player_choice = st.radio(
+    "Select one:",
+    choices,
+    horizontal=True
+)
+
+if st.button("Play Now! 🎯", use_container_width=True):
+    computer_choice = random.choice(choices)
+
+    st.session_state.player_choice = player_choice
+    st.session_state.computer_choice = computer_choice
+
+    if player_choice == computer_choice:
+        st.session_state.result = "🤝 It's a draw!"
+        st.session_state.draws += 1
+
+    elif (
+        (player_choice == "Rock" and computer_choice == "Scissors")
+        or
+        (player_choice == "Paper" and computer_choice == "Rock")
+        or
+        (player_choice == "Scissors" and computer_choice == "Paper")
+    ):
+        st.session_state.result = "🎉 You win!"
+        st.session_state.player_score += 1
+
+    else:
+        st.session_state.result = "🤖 Computer wins!"
+        st.session_state.computer_score += 1
+
+if "player_choice" in st.session_state:
+    st.divider()
+    st.write(f"**Your choice:** {st.session_state.player_choice}")
+    st.write(f"**Computer's choice:** {st.session_state.computer_choice}")
+    st.subheader(st.session_state.result)
+
+st.divider()
+st.subheader("🏆 Scoreboard")
+
+col1, col2, col3 = st.columns(3)
+
+col1.metric("Your Wins", st.session_state.player_score)
+col2.metric("Computer Wins", st.session_state.computer_score)
+col3.metric("Draws", st.session_state.draws)
+
+if st.button("🔄 Reset Game", use_container_width=True):
+    st.session_state.player_score = 0
+    st.session_state.computer_score = 0
+    st.session_state.draws = 0
+    st.session_state.result = "Choose your move to start!"
+    if "player_choice" in st.session_state:
+        del st.session_state.player_choice
+    if "computer_choice" in st.session_state:
+        del st.session_state.computer_choice
+    st.rerun()
+
+st.caption("Built with Python and Streamlit | By Inayatullah")
